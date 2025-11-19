@@ -38,29 +38,40 @@ That's it! Your custom error page is now live.
 
 You can customize the text, error codes, and status indicators without modifying the code. Just use **Environment Variables** in Cloudflare Pages.
 
-1.  Go to your Pages project **Settings** > **Environment variables**.
+1.  Go to your Pages project **Settings** → **Variables and secrets**.
 2.  Add a new variable named `VITE_CONFIG_JSON`.
-3.  Set the value to a JSON string with your custom settings.
+3.  Set the value to a JSON string with your custom settings (must be a single-line string, remove all comments).
 
-### Example Configuration
+### Example Configurations
+
+#### Example 1: System Maintenance (503)
 ```json
-{
-  "title": "System Maintenance",
-  "error_code": 503,
-  "what_happened": "<p>We are currently performing scheduled maintenance.</p>",
-  "what_can_i_do": "<p>Please check back in 15 minutes.</p>",
-  "browser_status": { "status": "ok", "status_text": "Your Browser" },
-  "cloudflare_status": { "status": "ok", "status_text": "Cloudflare" },
-  "host_status": { "status": "error", "status_text": "Maintenance" }
-}
+{"title":"System Maintenance","error_code":503,"what_happened":"<p>We are currently performing scheduled maintenance.</p>","what_can_i_do":"<p>Please check back in 30 minutes.</p>","browser_status":{"status":"ok","status_text":"Working"},"cloudflare_status":{"status":"ok","status_text":"Working"},"host_status":{"status":"error","status_text":"Maintenance"},"error_source":"host"}
 ```
 
-### Full Configuration Options
+#### Example 2: All Systems Operational (200)
+```json
+{"title":"Everything is working","error_code":200,"browser_status":{"status":"ok","status_text":"Working"},"cloudflare_status":{"status":"ok","status_text":"Working"},"host_status":{"status":"ok","status_text":"Working"},"what_happened":"<p>All systems are operational.</p>","what_can_i_do":"<p>Your website is running smoothly!</p>","more_information":{"hidden":true}}
+```
+
+#### Example 3: Custom Branding
+```json
+{"title":"Service Temporarily Unavailable","error_code":503,"what_happened":"<p>Our servers are experiencing high traffic.</p>","what_can_i_do":"<p>Please refresh the page or try again in a few moments.</p>","perf_sec_by":{"text":"YourCompany","link":"https://yourcompany.com"},"more_information":{"text":"status.yourcompany.com","link":"https://status.yourcompany.com"}}
+```
+
+#### Example 4: Network Issue
+```json
+{"title":"Unable to connect","error_code":522,"browser_status":{"status":"ok","status_text":"Working"},"cloudflare_status":{"status":"error","status_text":"Connection timeout","location":"Global Network"},"host_status":{"status":"error","status_text":"Unreachable","location":"Origin Server"},"error_source":"cloudflare","what_happened":"<p>Cloudflare is unable to establish a connection to the origin server.</p>"}
+```
+
+### Full Configuration Reference
+
 The app performs a deep merge, so you only need to provide the fields you want to override.
 
 ```javascript
 {
   "title": "Internal server error",
+  "html_title": null, // Defaults to "yourdomain.com | 500: Internal server error"
   "error_code": 500,
   "time": null, // Defaults to current UTC time
   "ray_id": null, // Defaults to random hex
