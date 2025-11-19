@@ -5,7 +5,7 @@ const defaultParams = {
   title: 'Internal server error',
   error_code: 500,
   browser_status: { status: 'ok', status_text: 'Working' },
-  cloudflare_status: { status: 'error', status_text: 'Not Working' },
+  cloudflare_status: { status: 'error', status_text: 'Error' },
   host_status: { status: 'ok', status_text: 'Working' },
   error_source: 'cloudflare',
   what_happened: '<p>There is an internal server error on Cloudflare\'s network.</p>',
@@ -43,38 +43,22 @@ const workingParams = {
   what_can_i_do: '<p>Visit the site before it crashes someday.</p>',
 };
 
+import './styles/demo.css';
+
 function App() {
   const [params, setParams] = useState(defaultParams);
-  const [showControls, setShowControls] = useState(true);
 
   return (
     <div>
-      {showControls && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          background: '#333',
-          color: '#fff',
-          padding: '10px',
-          zIndex: 9999,
-          display: 'flex',
-          gap: '10px',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: 'sans-serif',
-          fontSize: '14px'
-        }}>
-          <span>Select Scenario:</span>
-          <button onClick={() => setParams(defaultParams)}>Default (500)</button>
-          <button onClick={() => setParams(catastrophicParams)}>Catastrophic</button>
-          <button onClick={() => setParams(workingParams)}>Working (200)</button>
-          <div style={{ flex: 1 }}></div>
-          <button onClick={() => setShowControls(false)}>Hide Controls</button>
-        </div>
-      )}
-      <div style={{ marginTop: showControls ? '50px' : '0' }}>
+      <div className="demo-controller-trigger"></div>
+      <div className="demo-controller">
+        <span>Select Scenario:</span>
+        <button onClick={() => setParams(defaultParams)}>Default (500)</button>
+        <button onClick={() => setParams(catastrophicParams)}>Catastrophic</button>
+        <button onClick={() => setParams(workingParams)}>Working (200)</button>
+      </div>
+
+      <div>
         <ErrorPage params={params} />
       </div>
     </div>
