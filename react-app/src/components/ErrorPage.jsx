@@ -6,16 +6,21 @@ const ErrorPage = ({ params = {} }) => {
 
     const errorCode = params.error_code || 500;
     const title = params.title || 'Internal server error';
-    const htmlTitle = params.html_title || `${errorCode}: ${title}`;
+
+    const time = params.time || new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+    const rayId = params.ray_id || crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+    const clientIp = params.client_ip || '1.1.1.1';
+
+    // Custom domain support - defaults to current hostname if not provided
+    const customDomain = params.domain || (typeof window !== 'undefined' ? window.location.hostname : 'example.com');
+
+    // Page title format: <domain> | <errorCode>: <title>
+    const htmlTitle = params.html_title || `${customDomain} | ${errorCode}: ${title}`;
 
     // Set document title
     React.useEffect(() => {
         document.title = htmlTitle;
     }, [htmlTitle]);
-
-    const time = params.time || new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
-    const rayId = params.ray_id || crypto.randomUUID().replace(/-/g, '').slice(0, 16);
-    const clientIp = params.client_ip || '1.1.1.1';
 
     const moreInfo = params.more_information || {};
     const perfSecBy = params.perf_sec_by || {};
@@ -43,13 +48,12 @@ const ErrorPage = ({ params = {} }) => {
                         <div className="clearfix md:px-8">
                             {items.map((itemId) => {
                                 let icon = 'server';
-                                let defaultLocation = 'example.com';
+                                let defaultLocation = customDomain;
                                 let defaultName = 'Host';
 
                                 if (itemId === 'browser') {
                                     icon = 'browser';
                                     defaultLocation = 'You';
-                                    defaultName = 'Browser';
                                 } else if (itemId === 'cloudflare') {
                                     icon = 'cloud';
                                     defaultLocation = 'San Francisco';

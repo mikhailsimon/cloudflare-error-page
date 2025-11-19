@@ -42,7 +42,9 @@ You can customize the text, error codes, and status indicators without modifying
 2.  Add a new variable named `VITE_CONFIG_JSON`.
 3.  Set the value to a JSON string with your custom settings.
 
-### Example Configuration
+### Configuration Examples
+
+#### Example 1: System Maintenance (503)
 ```json
 {
   "title": "System Maintenance",
@@ -55,6 +57,48 @@ You can customize the text, error codes, and status indicators without modifying
 }
 ```
 
+#### Example 2: Everything is Working (200)
+```json
+{
+  "title": "Everything is working",
+  "error_code": 200,
+  "domain": "example.com",
+  "browser_status": { "status": "ok", "status_text": "Working" },
+  "cloudflare_status": { "status": "ok", "status_text": "Working", "location": "Hong Kong" },
+  "host_status": { "status": "ok", "status_text": "Working" },
+  "what_happened": "<p>All systems are operational.</p>",
+  "what_can_i_do": "<p>Your website is running smoothly!</p>",
+  "more_information": { "hidden": true }
+}
+```
+
+#### Example 3: Custom Error with Branding
+```json
+{
+  "title": "Service Temporarily Unavailable",
+  "error_code": 503,
+  "domain": "mywebsite.com",
+  "cloudflare_status": { "status": "ok", "location": "Singapore" },
+  "host_status": { "status": "error", "status_text": "Upgrading" },
+  "what_happened": "<p>We're upgrading our infrastructure.</p>",
+  "what_can_i_do": "<p>Follow us on Twitter <a href='https://twitter.com/yourhandle'>@yourhandle</a> for updates.</p>",
+  "perf_sec_by": { "text": "Your Company", "link": "https://yourcompany.com" }
+}
+```
+
+#### Example 4: Custom 404 Page
+```json
+{
+  "title": "Page Not Found",
+  "error_code": 404,
+  "browser_status": { "status": "ok", "status_text": "Working" },
+  "cloudflare_status": { "status": "ok", "status_text": "Working" },
+  "host_status": { "status": "ok", "status_text": "Working" },
+  "what_happened": "<p>The page you're looking for doesn't exist.</p>",
+  "what_can_i_do": "<p>Check the URL or visit our <a href='/'>homepage</a>.</p>"
+}
+```
+
 ### Full Configuration Options
 The app performs a deep merge, so you only need to provide the fields you want to override.
 
@@ -62,6 +106,8 @@ The app performs a deep merge, so you only need to provide the fields you want t
 {
   "title": "Internal server error",
   "error_code": 500,
+  "domain": null, // Defaults to current hostname (window.location.hostname)
+  "html_title": null, // Page title format: "<domain> | <error_code>: <title>"
   "time": null, // Defaults to current UTC time
   "ray_id": null, // Defaults to random hex
   "client_ip": "127.0.0.1",
@@ -87,7 +133,7 @@ The app performs a deep merge, so you only need to provide the fields you want t
   "host_status": {
     "status": "ok",
     "status_text": "Working",
-    "location": "The Site",
+    "location": null, // Defaults to the domain name
     "name": "Host"
   },
   "error_source": "cloudflare", // "browser", "cloudflare", or "host"
@@ -102,9 +148,30 @@ The app performs a deep merge, so you only need to provide the fields you want t
 }
 ```
 
----
+### Configuration Fields Explained
+
+| Field | Description | Default Value |
+|-------|-------------|---------------|
+| `title` | Error page title | `"Internal server error"` |
+| `error_code` | HTTP status code | `500` |
+| `domain` | Domain name displayed in Host location | Current hostname (`window.location.hostname`) |
+| `html_title` | Browser tab title | `"<domain> \| <error_code>: <title>"` |
+| `time` | Timestamp displayed on the page | Current UTC time |
+| `ray_id` | Cloudflare Ray ID | Random hex string |
+| `client_ip` | Client IP address | `"127.0.0.1"` |
+| `more_information.hidden` | Hide "Visit cloudflare.com" link | `false` |
+| `browser_status.location` | Browser location text | `"You"` |
+| `cloudflare_status.location` | Cloudflare edge location | `"London"` |
+| `host_status.location` | Host location (domain) | Same as `domain` |
+| `error_source` | Highlight error source section | `"cloudflare"` |
+| `what_happened` | HTML content for "What happened?" | Error description |
+| `what_can_i_do` | HTML content for "What can I do?" | Suggestion text |
+
+
 
 ## 🛠 Local Development
+
+### Running the Project
 
 To run the project locally:
 
@@ -114,7 +181,43 @@ npm install
 npm run dev
 ```
 
-This includes a **floating demo controller** (hover at the top of the screen) to quickly preview different error states (500, 503, 200).
+The development server includes a **floating demo controller** (hover at the top of the screen) to quickly preview different error states (500, 503, 200).
+
+### Using Custom Configuration Locally
+
+To test your custom configuration in local development:
+
+1. **Create a `.env` file** in the `react-app` directory:
+   ```bash
+   cd react-app
+   touch .env
+   ```
+
+2. **Add your configuration** to the `.env` file:
+   ```env
+   VITE_CONFIG_JSON={"title":"Everything is working","error_code":200,"domain":"localhost","browser_status":{"status":"ok","status_text":"Working"},"cloudflare_status":{"status":"ok","status_text":"Working","location":"Mars"},"host_status":{"status":"ok","status_text":"Working"},"what_happened":"<p>All systems are operational.</p>","what_can_i_do":"<p>Your website is running smoothly!</p>","more_information":{"hidden":true}}
+   ```
+
+3. **Restart the dev server** (stop and run `npm run dev` again) to apply the changes.
+
+#### More `.env` Examples
+
+**Maintenance Mode:**
+```env
+VITE_CONFIG_JSON={"title":"Under Maintenance","error_code":503,"cloudflare_status":{"location":"Tokyo"},"host_status":{"status":"error","status_text":"Maintenance"},"what_happened":"<p>We're making improvements.</p>","what_can_i_do":"<p>Check back in 30 minutes.</p>"}
+```
+
+**Custom 404:**
+```env
+VITE_CONFIG_JSON={"title":"Page Not Found","error_code":404,"domain":"mysite.local","what_happened":"<p>This page doesn't exist.</p>","what_can_i_do":"<p>Try searching or visit our homepage.</p>"}
+```
+
+**All Green (Status Page):**
+```env
+VITE_CONFIG_JSON={"title":"All Systems Operational","error_code":200,"browser_status":{"status":"ok"},"cloudflare_status":{"status":"ok","location":"Singapore"},"host_status":{"status":"ok"},"what_happened":"<p>Everything is working perfectly.</p>","more_information":{"hidden":true}}
+```
+
+> **💡 Tip:** The `.env` file is gitignored by default, so your local configuration won't be committed to the repository.
 
 ---
 

@@ -4,6 +4,7 @@ import ErrorPage from './components/ErrorPage';
 const defaultParams = {
   title: 'Internal server error',
   error_code: 500,
+  domain: null, // Defaults to current hostname (window.location.hostname)
   time: null, // Defaults to current UTC time
   ray_id: null, // Defaults to random hex
   client_ip: '127.0.0.1',
@@ -29,7 +30,6 @@ const defaultParams = {
   host_status: {
     status: 'ok',
     status_text: 'Working',
-    location: 'The Site',
     name: 'Host',
   },
   error_source: 'cloudflare',
@@ -68,7 +68,7 @@ const workingParams = {
   more_information: { hidden: true },
   browser_status: { status: 'ok', status_text: 'Seems Working', location: 'You', name: 'Browser' },
   cloudflare_status: { status: 'ok', status_text: 'Often Working', location: 'Cloud', name: 'Cloudflare' },
-  host_status: { status: 'ok', location: 'The Site', status_text: 'Just Working', name: 'Host' },
+  host_status: { status: 'ok', status_text: 'Just Working', name: 'Host' },
   error_source: 'host',
   what_happened: '<p>This site is still working. And it looks great.</p>',
   what_can_i_do: '<p>Visit the site before it crashes someday.</p>',
