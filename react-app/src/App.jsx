@@ -118,6 +118,10 @@ function App() {
 
   return (
     <div>
+      
+      <div>
+        <ErrorPage params={params} />
+      </div>
     </div>
   );
 }
