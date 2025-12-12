@@ -118,17 +118,6 @@ function App() {
 
   return (
     <div>
-      <div className="demo-controller-trigger"></div>
-      <div className="demo-controller">
-        <span>Select Scenario:</span>
-        <button onClick={() => setParams(defaultParams)}>Default (500)</button>
-        <button onClick={() => setParams(catastrophicParams)}>Catastrophic</button>
-        <button onClick={() => setParams(workingParams)}>Working (200)</button>
-      </div>
-
-      <div>
-        <ErrorPage params={params} />
-      </div>
     </div>
   );
 }
