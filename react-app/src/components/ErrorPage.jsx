@@ -92,11 +92,11 @@ const ErrorPage = ({ params = {} }) => {
                 <div className="w-240 lg:w-full mx-auto mb-8 lg:px-8">
                     <div className="clearfix">
                         <div className="w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed">
-                            <h2 className="text-3xl font-normal leading-1.3 mb-4">What happened?</h2>
+                            <h2 className="text-3xl font-normal leading-1.3 mb-4">Apa yang berlaku?</h2>
                             <div dangerouslySetInnerHTML={{ __html: params.what_happened || '<p>There is an internal server error on Cloudflare\'s network.</p>' }} />
                         </div>
                         <div className="w-1/2 md:w-full float-left leading-relaxed">
-                            <h2 className="text-3xl font-normal leading-1.3 mb-4">What can I do?</h2>
+                            <h2 className="text-3xl font-normal leading-1.3 mb-4">Langkah mengatasi?</h2>
                             <div dangerouslySetInnerHTML={{ __html: params.what_can_i_do || '<p>Please try again in a few minutes.</p>' }} />
                         </div>
                     </div>
